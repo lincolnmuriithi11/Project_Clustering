@@ -142,3 +142,24 @@ def wrangle_zillow():
     df = pd.concat([df, dummy_df], axis = 1)
 
     return df
+# this function is splitting data to train, validate, and test to avoid data leakage
+# finding the best features using kbest 
+def features_kbest(X, y, n):
+    """this function takes in a data frame with numeric features , uses kbest algorithm and brings back the top n features according to the target"""
+    f_selector = sklearn.feature_selection.SelectKBest(f_regression, k = n)
+    f_selector.fit(X, y)
+    f_support = f_selector.get_support()
+    #f_feature = X.loc[:,f_support].columns.tolist()
+    f_feature = X.columns[f_support]
+    return f_feature
+
+# finding the best features using RFE
+def features_rfe(X, y, n):
+    """this function takes in a data frame with numeric features , uses rfe algorithm and brings back the top n features according to the target"""
+    lm = LinearRegression()
+    rfe = sklearn.feature_selection.RFE(lm, n)
+    X_rfe = rfe.fit(X,y)
+    mask = rfe.support_
+    rfe_features = X.columns[mask]
+    return rfe_features
+    
